@@ -29,3 +29,7 @@ Route::get('user', [UserController::class, 'fetch'])->middleware('auth:sanctum')
 
 
 Route::get('/company', [CompanyController::class, 'all']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('company', [CompanyController::class, 'create']);
+});
