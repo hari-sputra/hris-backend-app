@@ -5,11 +5,13 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateCompanyRequest;
+use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
@@ -28,7 +30,9 @@ class CompanyController extends Controller
             return ResponseFormatter::error('Company not found', 404);
         }
 
-        $company = Company::with(['users']);
+        $company = Company::whereHas('users', function ($query) {
+            $query->where('user_id', Auth::id());
+        });
         if ($name) {
             $company = Company::where('name', 'like', '%' . $name . '%');
         }
@@ -58,6 +62,37 @@ class CompanyController extends Controller
             $company->load('users');
 
             return ResponseFormatter::success($company, 'Company Created Successfuly');
+        } catch (Exception $e) {
+            return ResponseFormatter::error($e->getMessage(), 500);
+        }
+    }
+
+    public function update(UpdateCompanyRequest $request, $id)
+    {
+        try {
+            $company = Company::find($id);
+
+            if (!$company) {
+                throw new Exception('Company not found');
+            }
+
+            // upload logo
+            if ($request->file('logo')) {
+                // delete logo
+                Storage::delete($company->logo);
+
+                // add new logo
+                $path = $request->file('logo')->store('public/logos');
+            }
+
+            // update company with update
+            $company->update([
+                'name' => $request->name,
+                'logo' => $path,
+            ]);
+
+            // return
+            return ResponseFormatter::success($company, 'Company Updated Successfuly');
         } catch (Exception $e) {
             return ResponseFormatter::error($e->getMessage(), 500);
         }
