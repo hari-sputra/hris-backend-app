@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\CompanyController;
+use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\TeamController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
@@ -32,11 +33,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/', [CompanyController::class, 'create']);
         Route::post('/{id}', [CompanyController::class, 'update']);
     });
+
     // Team
     Route::prefix('team')->group(function () {
         Route::get('/', [TeamController::class, 'all']);
         Route::post('/', [TeamController::class, 'create']);
         Route::post('/{id}', [TeamController::class, 'update']);
         Route::delete('/{id}', [TeamController::class, 'destroy']);
+    });
+
+    // Role
+    Route::prefix('role')->group(function () {
+        Route::get('/', [RoleController::class, 'all']);
+        Route::post('/', [RoleController::class, 'create']);
+        Route::post('/{id}', [RoleController::class, 'update']);
+        Route::delete('/{id}', [RoleController::class, 'destroy']);
     });
 });
