@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\CompanyController;
+use App\Http\Controllers\API\EmployeeController;
 use App\Http\Controllers\API\ResponsibilityController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\TeamController;
@@ -51,11 +52,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('/{id}', [RoleController::class, 'destroy']);
     });
 
-    // Role
+    // responsibility
     Route::prefix('responsibility')->group(function () {
         Route::get('/', [ResponsibilityController::class, 'all']);
         Route::post('/', [ResponsibilityController::class, 'create']);
         Route::delete('/{id}', [ResponsibilityController::class, 'destroy']);
+    });
+
+    // employee
+    Route::prefix('employee')->group(function () {
+        Route::get('/', [EmployeeController::class, 'all']);
+        Route::post('/', [EmployeeController::class, 'create']);
+        Route::post('/{id}', [EmployeeController::class, 'update']);
+        Route::delete('/{id}', [EmployeeController::class, 'destroy']);
     });
 
     // Route::get('/test/{id}', [ResponsibilityController::class, 'test']);
